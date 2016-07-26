@@ -53,21 +53,30 @@ func (r jsonApiRespCompany) Apply(req *revel.Request, resp *revel.Response) {
 
 func (c Company) List() revel.Result {
 
-	var search string
+	var search,types string
 	
 	companies := []models.Company{}
 	c.Params.Query = c.Request.URL.Query()
 	c.Params.Bind(&search, "q")
+	c.Params.Bind(&types, "types")
+	
        
         search = strings.TrimSpace(search)
+        types = strings.TrimSpace(types)
+        
+   
 
 	if search == "" {
 		fmt.Println("No search parameters passed")
+		if err := database.Company.Find(bson.M{}).All(&companies); err != nil {
+			// Internal Server Error
+			log.Fatal(err)
+		}
 		
 	} else {
 		search = strings.ToUpper(search)
 		
-		if err := database.Company.Find(bson.M{"specialties" : &bson.RegEx{Pattern : search,Options : "i"}}).All(&companies); err != nil {
+		if err := database.Company.Find(bson.M{types : &bson.RegEx{Pattern : search,Options : "i"}}).All(&companies); err != nil {
 			// Internal Server Error
 			log.Fatal(err)
 		}
