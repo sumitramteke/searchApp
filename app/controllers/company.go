@@ -44,21 +44,38 @@ func (r jsonApiRespCompany) Apply(req *revel.Request, resp *revel.Response) {
 func (c Company) List() revel.Result {
 	
 
-	var search,types string
+	var(
+
+		 search,types string
+		 page,per_page int
+	)
+
 
 	companies := []models.Company{}
+
 	c.Params.Query = c.Request.URL.Query()
+
 	c.Params.Bind(&search, "q")
 	c.Params.Bind(&types, "category")
+
+	c.Params.Bind(&page, "page")
+	c.Params.Bind(&per_page, "per_page")
 	
-        search = strings.TrimSpace(search)
-        types = strings.TrimSpace(types)
+    search = strings.TrimSpace(search)
+    types = strings.TrimSpace(types)
+
+
 
 	
+	 if page != 1{
+
+     	page = ((page - 1 ) * per_page) + 1 
+     }	
+
 
 	if search == ""{
 		
-		companies = helpers.ListAllCompany(companies)
+		companies = helpers.ListAllCompany(companies,page,per_page)
 
 	}else if types == ""  {  
 		
@@ -66,12 +83,12 @@ func (c Company) List() revel.Result {
 
 		search = strings.ToUpper(search)
 
-		companies = helpers.GenericSearch(companies,search)	
+		companies = helpers.GenericSearch(companies,search,page,per_page)	
 	}else {	
 		
 		search = strings.ToUpper(search)
 	
-		companies = helpers.FilterSearch(companies,search,types)
+		companies = helpers.FilterSearch(companies,search,types,page,per_page)
 
 	}
 
@@ -80,17 +97,7 @@ func (c Company) List() revel.Result {
 	return jsonApiRespCompany(company)
 }
 
-/*func (c Company)GetQueryParameters(p ParamValues) ParamValues{
-	
-	c.Params.Query = c.Request.URL.Query()
-	c.Params.Bind(&p.search, "q")
-	c.Params.Bind(&p.category, "category")	
-	
-	p.search = strings.TrimSpace(p.search)
-        p.category = strings.TrimSpace(p.category)
-	
-	return p
-}*/
+
 
 
 

@@ -10,9 +10,9 @@ import (
 
 
 
-func ListAllCompany(c []models.Company) []models.Company{
+func ListAllCompany(c []models.Company,page int,per_page int) []models.Company{
 
-	if err := database.Company.Find(bson.M{}).All(&c); err != nil {
+	if err := database.Company.Find(bson.M{}).Skip(page - 1).Limit(per_page).All(&c); err != nil {
 			// Internal Server Error
 			log.Fatal(err)
 	}
@@ -21,9 +21,9 @@ func ListAllCompany(c []models.Company) []models.Company{
 
 }
 
-func GenericSearch(c []models.Company,search string) []models.Company{
+func GenericSearch(c []models.Company,search string,page int,per_page int) []models.Company{
 
-	if err := database.Company.Find(bson.M{"$text" : bson.M{"$search": search}}).All(&c); err != nil {
+	if err := database.Company.Find(bson.M{"$text" : bson.M{"$search": search}}).Skip(page - 1).Limit(per_page).All(&c); err != nil {
 			// Internal Server Error
 			log.Fatal(err)
 	}
@@ -31,10 +31,10 @@ func GenericSearch(c []models.Company,search string) []models.Company{
 	return c
 }
 
-func FilterSearch(c []models.Company,search string,types string) []models.Company{
+func FilterSearch(c []models.Company,search string,types string,page int,per_page int) []models.Company{
 
 	
-	if err := database.Company.Find(bson.M{types : &bson.RegEx{Pattern : search,Options : "i"}}).All(&c); err != nil {
+	if err := database.Company.Find(bson.M{types : &bson.RegEx{Pattern : search,Options : "i"}}).Skip(page - 1).Limit(per_page).All(&c); err != nil {
 			// Internal Server Error
 			log.Fatal(err)
 	}
