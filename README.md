@@ -14,7 +14,7 @@ This search app is developed in revel golang framework and it uses mongodb datab
     mongoimport --db workype --collection company --drop --file \location of the company json file\company.json
     
 ####Creating text index in mongodb
-    db.company.createIndex({requirements: "text",specialties: "text",company_name: "text",language: "text"},{language_overrride: "dummy"})
+    db.company.createIndex({requirements: "text",specialties: "text",company_name: "text",language: "text"},{language_override: "dummy"})
     
 ####Running the app
      revel run searchApp
